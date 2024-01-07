@@ -1,23 +1,27 @@
-// concept of memoization in js relies on two concepts
-// 1. closure
-// 2. higher order functions
+// Approach 1: Memoization using closure and cache object
 
-function fibonacci(n, cache = {}) {
-	if (n <= 1) {
-		return n;
+function fibonacciWithClosure(n) {
+	const cache = {};
+
+	function fib(n) {
+		if (n <= 1) {
+			return n;
+		}
+
+		if (cache[n]) {
+			return cache[n];
+		}
+
+		const result = fib(n - 1) + fib(n - 2);
+		cache[n] = result;
+
+		return result;
 	}
 
-	if (cache[n]) {
-		return cache[n];
-	}
-
-	const result = fibonacci(n - 1, cache) + fibonacci(n - 2, cache);
-	cache[n] = result;
-
-	return result;
+	return fib(n);
 }
 
-// now using a higher order function
+// Approach 2: Memoization using higher-order function
 
 function memoize(func) {
 	const cache = {};
@@ -36,4 +40,14 @@ function memoize(func) {
 	};
 }
 
-const fibonacciMemoized = memoize(fibonacci);
+const fibonacciWithHigherOrder = memoize(function (n) {
+	if (n <= 1) {
+		return n;
+	}
+
+	return fibonacciWithHigherOrder(n - 1) + fibonacciWithHigherOrder(n - 2);
+});
+
+// Usage
+console.log(fibonacciWithClosure(5)); // Example using closure and cache object
+console.log(fibonacciWithHigherOrder(5)); // Example using higher-order function
